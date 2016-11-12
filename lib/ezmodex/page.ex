@@ -28,8 +28,4 @@ defmodule Ezmodex.Page do
     end
   end
 
-  def html5(children) do
-    ["<!DOCTYPE html>", "<html>", children, "</html>"]
-  end
-
 end

@@ -3,11 +3,15 @@ defmodule Ezmodex.Mixfile do
 
   def project do
     [app: :ezmodex,
-     version: "0.1.0",
+     version: "0.2.0",
      elixir: "~> 1.3",
      description: description(),
      package: package(),
-     deps: deps()]
+     deps: deps(),
+     aliases: [
+       test: "test --no-start"
+     ]
+   ]
   end
 
   def application do

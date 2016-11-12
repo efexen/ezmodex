@@ -1,30 +1,34 @@
 defmodule Ezmodex.Elements do
+  import Kernel, except: [div: 2]
 
   @all_elements MapSet.new(
-    ~w(head body title p div h1 h2 a ul li input)a
+    ~w(html head body title p div h1 h2 a ul li input)a
   )
 
   defmacro __using__(options) do
-    elements = import_elements(options)
-
-    quote bind_quoted: [elements: elements] do
+    quote do
       import Kernel, except: [div: 2]
-      import Ezmodex.Elements
-
-      Enum.each(elements, fn name ->
-        def unquote(name)(attributes) when is_map(attributes), do: unquote(name)(attributes, [])
-        def unquote(name)(children) when is_list(children), do: unquote(name)(%{}, children)
-        def unquote(name)(attributes, children) when is_map(attributes) and is_list(children) do
-          build_tag(unquote(name), attributes, children)
-        end
-      end)
-
+      import Ezmodex.Elements, unquote(options)
     end
   end
 
-  def text(string), do: [string]
+  def html5(children) do
+    ["<!DOCTYPE html>", html([ children ])]
+  end
 
-  def build_tag(tag, attributes, children) do
+  Enum.each(@all_elements, fn name ->
+    def unquote(name)(attributes) when is_map(attributes), do: unquote(name)(attributes, [])
+    def unquote(name)(children) when is_list(children), do: unquote(name)(%{}, children)
+    def unquote(name)(attributes, children) do
+      build_tag(unquote(name), attributes, children)
+    end
+  end)
+
+  def text(string) do
+    [Ezmodex.HTML.Sanitizer.clean(string)]
+  end
+
+  defp build_tag(tag, attributes, children) do
     tag_name = Atom.to_string(tag)
 
     start_tag = ["<#{tag_name}#{format_attributes(attributes)}>"]
@@ -49,17 +53,6 @@ defmodule Ezmodex.Elements do
   defp format_attribute({}), do: ""
   defp format_attribute({ name, value }) do
     " #{name}=\"#{value}\""
-  end
-
-  defp import_elements(options) do
-    cond do
-      Keyword.has_key?(options, :only) ->
-        MapSet.intersection(@all_elements, MapSet.new(options[:only]))
-      Keyword.has_key?(options, :except) ->
-        MapSet.difference(@all_elements, MapSet.new(options[:except]))
-      true ->
-        @all_elements
-    end |> MapSet.to_list
   end
 
 end
