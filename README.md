@@ -8,7 +8,7 @@ Highly experimental lightweight microframework built on top of Plug
 
     ```elixir
     def deps do
-      [{:ezmodex, "~> 0.1.0"}]
+      [{:ezmodex, "~> 0.3.0"}]
     end
     ```
 
@@ -54,13 +54,13 @@ Highly experimental lightweight microframework built on top of Plug
         ]
       end
 
-      section head do
+      partial head do
         head [
           title [ text("Homepage") ]
         ]
       end
 
-      section body do
+      partial body do
         body [
           div [
             h1([ text("Ezmodex!") ]),

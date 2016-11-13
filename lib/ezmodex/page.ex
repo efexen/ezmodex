@@ -10,7 +10,7 @@ defmodule Ezmodex.Page do
     end
   end
 
-  defmacro section(name, do: content) do
+  defmacro partial(name, do: content) do
     quote do
       def unquote(name) do
         unquote(content)
