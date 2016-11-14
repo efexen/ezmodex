@@ -17,6 +17,7 @@ defmodule Ezmodex.HTML.Sanitizer do
       "Tom &amp; Jerry"
 
   """
+  @spec clean(String.t) :: String.t
   def clean(""), do: ""
   def clean(string) do
     string

@@ -73,6 +73,11 @@ defmodule Ezmodex.Elements do
 
   """
 
+  @typedoc """
+    Element tree is a list that contains either strings or Element trees
+  """
+  @type element_tree :: [String.t | element_tree]
+
   defmacro __using__(options) do
     quote do
       import Kernel, except: [div: 2]
@@ -89,6 +94,7 @@ defmodule Ezmodex.Elements do
       "<!DOCTYPE html><html><head></head><body</body></html>"
 
   """
+  @spec html5(element_tree) :: element_tree
   def html5(children) do
     ["<!DOCTYPE html>", html([ children ])]
   end
@@ -118,7 +124,7 @@ defmodule Ezmodex.Elements do
       "&lt;script&gt;"
 
   """
-  @spec text(String.t) :: String.t
+  @spec text(String.t) :: [String.t]
   def text(string) do
     [Ezmodex.HTML.Sanitizer.clean(string)]
   end
@@ -136,7 +142,7 @@ defmodule Ezmodex.Elements do
       "<bunny awesomeness="high"></bunny>"
 
   """
-  @spec build_element(String.t, map, list) :: List.t
+  @spec build_element(String.t, map, element_tree) :: element_tree
   def build_element(element, attributes, children) do
     element_name = Atom.to_string(element)
 
