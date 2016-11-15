@@ -7,6 +7,9 @@ defmodule Ezmodex.Page do
       import unquote(__MODULE__)
 
       def init(opts), do: opts
+
+      def set_data(conn), do: nil
+      defoverridable [set_data: 1]
     end
   end
 
@@ -18,9 +21,18 @@ defmodule Ezmodex.Page do
     end
   end
 
+  defmacro data(do: content) do
+    quote do
+      def set_data(conn), do: unquote(content)
+      def data, do: nil
+    end
+  end
+
   defmacro view(do: content) do
     quote do
       def view(conn) do
+        set_data(conn)
+
         conn
         |> put_resp_content_type("text/html")
         |> send_resp(@status_code, Enum.join(unquote(content), ""))
