@@ -100,8 +100,12 @@ defmodule Ezmodex.Elements do
   end
 
   Enum.each(@all_elements, fn name ->
-    @doc false
-    def unquote(name)(), do: unquote(name)(%{}, [])
+
+    if Enum.member?(@empty_elements, name) do
+      @doc false
+      def unquote(name)(), do: unquote(name)(%{}, [])
+    end
+
     @doc false
     def unquote(name)(attributes) when is_map(attributes), do: unquote(name)(attributes, [])
     @doc false
