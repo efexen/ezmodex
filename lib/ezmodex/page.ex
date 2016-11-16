@@ -23,8 +23,16 @@ defmodule Ezmodex.Page do
 
   defmacro data(do: content) do
     quote do
-      def set_data(conn), do: unquote(content)
-      def data, do: nil
+      def set_data(conn) do
+        case Process.get(:view_data) do
+          nil ->
+            Process.put(:view_data, unquote(content))
+          _ ->
+            raise "Data already set"
+        end
+      end
+
+      def data, do: Process.get(:view_data)
     end
   end
 
