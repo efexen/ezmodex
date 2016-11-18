@@ -21,9 +21,13 @@ defmodule Ezmodex.Page do
     end
   end
 
-  defmacro data(do: content) do
+  defmacro data({ context_name, _, _ } \\ { :__context, nil, nil }, do: content) do
+    context_var = Macro.var(context_name, nil)
+
     quote do
       def set_data(conn) do
+        var!(unquote(context_var)) = conn
+
         case Process.get(:view_data) do
           nil ->
             Process.put(:view_data, unquote(content))
