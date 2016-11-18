@@ -14,7 +14,8 @@ defmodule Ezmodex.Router do
   defmacro gets(definition, module) do
     quote do
       get unquote(definition) do
-        unquote(module).view(var!(conn, Plug.Router))
+        Process.put(:view_data, nil)
+        unquote(module).action(var!(conn, Plug.Router))
       end
     end
   end
@@ -22,7 +23,8 @@ defmodule Ezmodex.Router do
   defmacro not_found(module) do
     quote do
       match _ do
-        unquote(module).view(var!(conn, Plug.Router))
+        Process.put(:view_data, nil)
+        unquote(module).action(var!(conn, Plug.Router))
       end
     end
   end

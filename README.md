@@ -8,7 +8,7 @@ Highly experimental lightweight microframework built on top of Plug
 
     ```elixir
     def deps do
-      [{:ezmodex, "~> 0.3.1"}]
+      [{:ezmodex, "~> 0.4.0"}]
     end
     ```
 

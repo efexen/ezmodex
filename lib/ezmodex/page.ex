@@ -21,23 +21,43 @@ defmodule Ezmodex.Page do
     end
   end
 
-  defmacro data(do: content) do
+  defmacro data({ context_name, _, _ } \\ { :__context, nil, nil }, do: content) do
+    context_var = Macro.var(context_name, nil)
+
     quote do
-      def set_data(conn), do: unquote(content)
-      def data, do: nil
+      def set_data(conn) do
+        var!(unquote(context_var)) = clean_conn(conn)
+
+        case Process.get(:view_data) do
+          nil ->
+            Process.put(:view_data, unquote(content))
+          _ ->
+            raise "Data already set"
+        end
+      end
+
+      def data, do: Process.get(:view_data)
     end
   end
 
   defmacro view(do: content) do
     quote do
-      def view(conn) do
+
+      def action(conn) do
         set_data(conn)
 
         conn
         |> put_resp_content_type("text/html")
         |> send_resp(@status_code, Enum.join(unquote(content), ""))
       end
+
     end
+  end
+
+  def clean_conn(conn) do
+    %{
+      connection: conn
+    }
   end
 
 end
