@@ -26,7 +26,7 @@ defmodule Ezmodex.Page do
 
     quote do
       def set_data(conn) do
-        var!(unquote(context_var)) = conn
+        var!(unquote(context_var)) = clean_conn(conn)
 
         case Process.get(:view_data) do
           nil ->
@@ -42,14 +42,22 @@ defmodule Ezmodex.Page do
 
   defmacro view(do: content) do
     quote do
-      def view(conn) do
+
+      def action(conn) do
         set_data(conn)
 
         conn
         |> put_resp_content_type("text/html")
         |> send_resp(@status_code, Enum.join(unquote(content), ""))
       end
+
     end
+  end
+
+  def clean_conn(conn) do
+    %{
+      connection: conn
+    }
   end
 
 end

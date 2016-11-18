@@ -15,7 +15,7 @@ defmodule Ezmodex.Router do
     quote do
       get unquote(definition) do
         Process.put(:view_data, nil)
-        unquote(module).view(var!(conn, Plug.Router))
+        unquote(module).action(var!(conn, Plug.Router))
       end
     end
   end
@@ -24,7 +24,7 @@ defmodule Ezmodex.Router do
     quote do
       match _ do
         Process.put(:view_data, nil)
-        unquote(module).view(var!(conn, Plug.Router))
+        unquote(module).action(var!(conn, Plug.Router))
       end
     end
   end
